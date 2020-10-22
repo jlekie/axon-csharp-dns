@@ -26,14 +26,14 @@ namespace Axon.Dns
             var srvRecords = results.Answers.SrvRecords().ToArray();
             var srvRecord = srvRecords[this.discoveryRand.Next(srvRecords.Length)];
 
-            return this.EndpointDecoder.Create(srvRecord.Target, srvRecord.Port); //TODO
+            return this.EndpointDecoder.Create(srvRecord.Target.Value.TrimEnd('.'), srvRecord.Port); //TODO
         }
         public override async Task<TEndpoint[]> DiscoverAll(int timeout = 0)
         {
             var results = await this.dnsClient.QueryAsync(this.Identifier, QueryType.SRV);
             var srvRecords = results.Answers.SrvRecords().ToArray();
 
-            return srvRecords.Select(r => this.EndpointDecoder.Create(r.Target, r.Port)).ToArray(); // TODO
+            return srvRecords.Select(r => this.EndpointDecoder.Create(r.Target.Value.TrimEnd('.'), r.Port)).ToArray(); // TODO
         }
         public override Task Blacklist(TEndpoint endpoint)
         {
